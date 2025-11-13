@@ -26,7 +26,8 @@ const clientSchema = new mongoose.Schema({
     motDePasse: {
         type: String,
         required: true,
-        minlength: 6 // Longueur minimale du mot de passe
+        minlength: 6, // Longueur minimale du mot de passe
+        select: false // Masque ce champ par défaut
     },
     dateCreation: {
         type: Date,
@@ -34,7 +35,7 @@ const clientSchema = new mongoose.Schema({
     }
 }, {
     // Options de Schéma (pour ajouter des timestamps automatiques)
-    timestamps: true 
+    timestamps: true
 });
 
 // Création du Modèle basé sur le Schéma, et exportation
