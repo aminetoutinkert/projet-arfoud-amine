@@ -1,13 +1,15 @@
-// Fichier: frontend/src/pages/EditArticle.jsx
+// Fichier: frontend/src/pages/EditArticle.jsx (Contenu entier avec la modification commentée)
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Importation de useParams
+import { useNavigate, useParams } from 'react-router-dom'; 
 import axios from 'axios';
+// NOUVEL IMPORT : Toast
+import { toast } from 'react-toastify'; 
 
 function EditArticle() {
     const navigate = useNavigate();
     // Utilisation de useParams pour obtenir l'ID de l'article depuis l'URL
-    const { id } = useParams(); // <-- NOUVEAU: Récupérer l'ID
+    const { id } = useParams(); 
 
     // État pour stocker les données de l'article (initialisé avec des chaînes vides)
     const [formData, setFormData] = useState({
@@ -57,7 +59,7 @@ function EditArticle() {
                 setFormData({
                     nom: articleData.nom || '',
                     description: articleData.description || '',
-                    // Convertir en chaînes pour éviter l'affichage de '0' (comme corrigé dans ArticleForm)
+                    // Convertir en chaînes pour éviter l'affichage de '0' 
                     prix: articleData.prix.toString(), 
                     quantiteStock: articleData.quantiteStock.toString(),
                 });
@@ -65,7 +67,10 @@ function EditArticle() {
 
             } catch (err) {
                 console.error('Erreur lors du chargement de l\'article:', err);
-                setError('Impossible de charger les données de l\'article. Peut-être non autorisé.');
+                const errorMessage = 'Impossible de charger les données de l\'article. Peut-être non autorisé.';
+                setError(errorMessage);
+                // MODIFICATION : Remplacement de l'alerte locale par un toast
+                toast.error(errorMessage);
                 setLoading(false);
             }
         };
@@ -107,13 +112,15 @@ function EditArticle() {
             // Appel API PUT pour la modification
             await axios.put(`http://localhost:5000/api/articles/${id}`, updatedArticleData, config);
             
-            alert(`Article "${nom}" mis à jour avec succès.`);
+            // MODIFICATION : Remplacement de l'alerte par un toast de succès
+            toast.success(`Article "${nom}" mis à jour avec succès.`);
             // Rediriger l'utilisateur vers le dashboard après la modification
             navigate('/dashboard');
             
         } catch (error) {
             const errorMessage = (error.response && error.response.data && error.response.data.message) || 'Erreur lors de la mise à jour de l\'article.';
-            alert(errorMessage);
+            // MODIFICATION : Remplacement de l'alerte par un toast d'erreur
+            toast.error(errorMessage);
             console.error('Erreur de mise à jour:', error);
         }
     };
@@ -124,6 +131,7 @@ function EditArticle() {
     }
 
     if (error) {
+        // La gestion de l'erreur dans le JSX peut rester car elle bloque l'affichage du formulaire
         return <h1>Erreur: {error}</h1>;
     }
 
