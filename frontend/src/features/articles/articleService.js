@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 // URL de base de l'API Articles
-const API_URL = '/api/articles/'; 
+const API_URL = 'http://localhost:5000/api/articles'; 
 
 // Fonction pour Créer un nouvel article
 const createArticle = async (articleData, token) => {
@@ -44,7 +44,7 @@ const deleteArticle = async (articleId, token) => {
     };
     
     // Appel DELETE à la route /api/articles/:id
-    const response = await axios.delete(API_URL + articleId, config);
+    const response = await axios.delete(API_URL +'/' + articleId, config);
 
     // Le contrôleur renvoie un message de succès
     return response.data; 

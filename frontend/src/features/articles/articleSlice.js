@@ -1,4 +1,4 @@
-// Fichier: frontend/src/features/articles/articleSlice.js
+// Fichier: frontend/src/features/articles/articleSlice.js (Contenu entier)
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import articleService from './articleService';
@@ -14,22 +14,17 @@ const initialState = {
 
 // ----------------------------------------------------------------------
 // 1. Créer un nouvel article
-// Utilisation de createAsyncThunk pour gérer la requête POST asynchrone
 export const createArticle = createAsyncThunk(
     'articles/create',
     async (articleData, thunkAPI) => {
         try {
-            // Le token JWT est nécessaire pour les routes protégées
             const token = thunkAPI.getState().auth.client.token;
             return await articleService.createArticle(articleData, token);
         } catch (error) {
-            // Gestion et formatage du message d'erreur
             const message =
                 (error.response && error.response.data && error.response.data.message) ||
                 error.message ||
                 error.toString();
-
-            // Rejeter la promesse et passer le message d'erreur dans l'action payload
             return thunkAPI.rejectWithValue(message);
         }
     }
@@ -60,7 +55,6 @@ export const deleteArticle = createAsyncThunk(
     async (id, thunkAPI) => {
         try {
             const token = thunkAPI.getState().auth.client.token;
-            // articleService.deleteArticle renvoie le message de succès du backend
             return await articleService.deleteArticle(id, token);
         } catch (error) {
             const message =
@@ -78,7 +72,6 @@ export const articleSlice = createSlice({
     name: 'article',
     initialState,
     reducers: {
-        // Reducer pour réinitialiser l'état (utilisé après la réussite/échec)
         reset: (state) => initialState,
     },
     extraReducers: (builder) => {
@@ -86,18 +79,20 @@ export const articleSlice = createSlice({
             // ==================== CREATE ARTICLE ====================
             .addCase(createArticle.pending, (state) => {
                 state.isLoading = true;
+                state.isSuccess = false; // Sécurité
             })
             .addCase(createArticle.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
                 // Ajoute le nouvel article au début du tableau existant
                 state.articles.unshift(action.payload);
+                state.message = "Article créé avec succès"; // 🚨 NOUVEAU MESSAGE SPÉCIFIQUE
             })
             .addCase(createArticle.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
-                state.articles = []; // [NOUVEAU] Assurez-vous que le tableau est vide en cas d'échec
-                state.message = action.payload; // Le message d'erreur
+                state.articles = [];
+                state.message = action.payload;
             })
 
             // ==================== GET ARTICLES ====================
@@ -106,31 +101,30 @@ export const articleSlice = createSlice({
             })
             .addCase(getArticles.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.isSuccess = true;
-                // Remplace le tableau par la liste complète reçue
+                // state.isSuccess = true; // 🚨 LIGNE RETIRÉE
                 state.articles = action.payload;
             })
             .addCase(getArticles.rejected, (state, action) => {
                 state.isLoading = false;
-                state.isError = true;
+                // state.isError = true; // 🚨 LIGNE RETIRÉE
                 state.message = action.payload;
+                state.articles = [];
             })
 
             // ==================== DELETE ARTICLE ====================
             .addCase(deleteArticle.pending, (state) => {
                 state.isLoading = true;
+                state.isSuccess = false; // Sécurité
             })
             .addCase(deleteArticle.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isSuccess = true;
-                // action.meta.arg contient l'ID passé à deleteArticle
                 const deletedId = action.meta.arg;
-                // Filtre le tableau pour retirer l'article supprimé
                 state.articles = state.articles.filter(
                     (article) => article._id !== deletedId
                 );
-                // Le message est le retour du service (ex: "Article supprimé avec succès")
-                state.message = action.payload.message;
+                // state.message était "action.payload.message" avant, nous le standardisons
+                state.message = "Article supprimé avec succès"; // 🚨 NOUVEAU MESSAGE SPÉCIFIQUE
             })
             .addCase(deleteArticle.rejected, (state, action) => {
                 state.isLoading = false;
