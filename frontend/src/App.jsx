@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import EditArticle from './pages/EditArticle'; // <-- NOUVEL IMPORT
 
 import Navbar from './components/Navbar';
+import { ToastContainer } from 'react-toastify'; // <-- NOUVEL IMPORT
+import 'react-toastify/dist/ReactToastify.css'; // <-- NOUVEL IMPORT
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      <ToastContainer /> {/* <-- AJOUT DU TOAST CONTAINER */}
     </>
   );
 }

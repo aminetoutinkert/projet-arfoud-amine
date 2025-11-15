@@ -1,8 +1,9 @@
 // Fichier: frontend/src/pages/Dashboard.jsx 
 
-import React, { useEffect, useRef } from 'react'; // 🚨 AJOUT DE useRef
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify'; // <-- NOUVEL IMPORT
 
 // Importation des composants et des actions REDUX
 import ArticleForm from '../components/ArticleForm';
@@ -40,7 +41,7 @@ function Dashboard() {
         if (isError) {
             console.error(message);
             // Nous laissons l'alerte d'erreur ici pour les erreurs de chargement initiales.
-            alert(message); 
+            toast.error(message); 
         }
 
         // Appel de l'action asynchrone REDUX pour charger la liste
@@ -71,7 +72,11 @@ function Dashboard() {
         if (message) {
             // Note: L'alerte d'erreur lors du chargement initial est gérée par le useEffect principal.
             // Ceci gère les erreurs post-action (création/suppression) ou le succès.
-            alert(message);
+            if (isError) {
+                toast.error(message);
+            } else if (isSuccess) {
+                toast.success(message);
+            }
         }
         
         // 4. Marquer comme traité avant le reset.

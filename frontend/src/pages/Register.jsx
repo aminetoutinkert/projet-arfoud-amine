@@ -5,6 +5,7 @@ import { FaUser } from 'react-icons/fa'; // Ajout de l'icône si nécessaire
 import { useSelector, useDispatch } from 'react-redux'; // <-- NOUVEL IMPORT REDUX
 import { useNavigate } from 'react-router-dom';
 import { register, reset } from '../features/auth/authSlice'; // <-- NOUVEL IMPORT REDUX
+import { toast } from 'react-toastify'; // <-- NOUVEL IMPORT
 
 // L'importation d'axios n'est plus nécessaire ici.
 // import axios from 'axios'; 
@@ -31,7 +32,7 @@ function Register() {
   // Effet pour gérer les redirections et les messages
   useEffect(() => {
     if (isError) {
-      alert(message);
+      toast.error(message);
     }
 
     // Si l'inscription est réussie ou si l'utilisateur est déjà connecté
@@ -58,7 +59,7 @@ function Register() {
     e.preventDefault();
 
     if (motDePasse !== motDePasse2) {
-      alert('Les mots de passe ne correspondent pas.');
+      toast.error('Les mots de passe ne correspondent pas.');
     } else {
       const clientData = {
         nom,

@@ -5,6 +5,7 @@ import { FaSignInAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login, reset } from '../features/auth/authSlice';
+import { toast } from 'react-toastify'; // <-- NOUVEL IMPORT
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ function Login() {
     // Effet pour gérer les redirections et les messages
     useEffect(() => {
         if (isError) {
-            alert(message);
+            toast.error(message);
         }
 
         // Si la connexion est réussie ou si l'utilisateur est déjà connecté
