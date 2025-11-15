@@ -16,8 +16,8 @@ body {
 
 /* Conteneur principal pour centrer le contenu */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 90%; /* Changed from max-width: 1200px; to width: 90% */
+  margin: 0 auto; /* Keep margin auto to center the block */
   padding: 0 20px;
 }
 
