@@ -45,7 +45,11 @@ app.get('/', (req, res) => {
 // Utilisation du middleware d'erreur pour intercepter les erreurs des asyncHandler (DOIT ÊTRE APRÈS LES ROUTES)
 app.use(errorHandler); // <-- DOIT ÊTRE UTILISÉ APRÈS LES ROUTES
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-    console.log(`Serveur démarré avec succès sur le port ${PORT}`);
-});
+// Démarrage du serveur (conditionnel pour les tests)
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Serveur démarré avec succès sur le port ${PORT}`);
+    });
+}
+
+module.exports = app; // <-- EXPORT DE L'APPLICATION POUR LES TESTS
