@@ -61,7 +61,7 @@ const uploadImage = async (imageData, token) => {
 
     const response = await axios.post(`${API_URL}/upload`, imageData, config);
 
-    return response.data;
+    return response.data.imageUrl; // Extrait l'URL de l'image du corps de la réponse JSON
 };
 
 

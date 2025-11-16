@@ -9,7 +9,7 @@ const Client = require('../models/Client'); // Nécessaire pour les validations 
 // @access  Private (nécessite un token)
 const createArticle = asyncHandler(async (req, res) => {
     // 1. Vérification des données requises
-    const { nom, description, prix, quantiteStock } = req.body;
+    const { nom, description, prix, quantiteStock, image } = req.body;
 
     if (!nom || !description || !prix || !quantiteStock) {
         res.status(400);
@@ -23,7 +23,7 @@ const createArticle = asyncHandler(async (req, res) => {
         description,
         prix,
         quantiteStock,
-        // image est optionnel, si non fourni, il prendra la valeur par défaut
+        image, // Inclure l'URL de l'image
     });
 
     // 3. Réponse de succès

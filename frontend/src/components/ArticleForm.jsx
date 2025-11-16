@@ -17,6 +17,7 @@ function ArticleForm() {
         quantiteStock: '',
     });
     const [image, setImage] = useState(''); // State pour l'URL de l'image
+    const [isUploading, setIsUploading] = useState(false); // State pour le chargement de l'image
 
     const { nom, description, prix, quantiteStock } = formData;
     
@@ -69,15 +70,21 @@ function ArticleForm() {
         const imageData = new FormData();
         imageData.append('image', e.target.files[0]);
         
+        setIsUploading(true);
         try {
             const imageUrl = await dispatch(uploadImage(imageData)).unwrap();
             setImage(imageUrl);
         } catch (error) {
             console.error('Failed to upload image:', error);
+            if (error.response) {
+                console.error('Error response:', error.response);
+            }
+        } finally {
+            setIsUploading(false);
         }
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         
         const articleData = {
@@ -89,8 +96,11 @@ function ArticleForm() {
             image, // Ajout de l'URL de l'image
         };
         
-        // Appel de l'action Redux
-        dispatch(createArticle(articleData)); 
+        try {
+            await dispatch(createArticle(articleData)).unwrap();
+        } catch (error) {
+            console.error('Failed to create article:', error);
+        }
     };
     
     if (isLoading) {
@@ -174,6 +184,7 @@ function ArticleForm() {
                         className='form-control'
                         onChange={onFileChange}
                     />
+                    {isUploading && <p>Téléversement en cours...</p>}
                 </div>
                 
                 {/* Bouton de Soumission */}

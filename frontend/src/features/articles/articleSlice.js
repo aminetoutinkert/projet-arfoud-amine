@@ -193,20 +193,6 @@ export const articleSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;
-            })
-            // ==================== UPLOAD IMAGE ====================
-            .addCase(uploadImage.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(uploadImage.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.isSuccess = true;
-                // Note: We don't modify the state here as the image URL is handled in the form state
-            })
-            .addCase(uploadImage.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isError = true;
-                state.message = action.payload;
             });
             // 🚨 FIN DE LA MODIFICATION POUR UPDATE
     },

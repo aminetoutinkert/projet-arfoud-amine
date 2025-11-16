@@ -10,7 +10,7 @@ const multer = require('multer');
 // --- Configuration de Multer pour le stockage des images ---
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, 'backend/uploads/'); // Le dossier où les images seront stockées
+        cb(null, path.join(__dirname, '../uploads/')); // Le dossier où les images seront stockées
     },
     filename(req, file, cb) {
         // Crée un nom de fichier unique pour éviter les conflits
@@ -27,8 +27,8 @@ const upload = multer({ storage });
 // POST /api/articles/upload
 router.post('/upload', upload.single('image'), (req, res) => {
     if (req.file) {
-        // Retourne le chemin de l'image téléversée
-        res.status(200).send(`/${req.file.path.replace(/\\/g, '/')}`);
+        // Retourne une URL relative pour l'image téléversée
+        res.status(200).json({ imageUrl: `/backend/uploads/${req.file.filename}` });
     } else {
         res.status(400).send('Aucun fichier téléversé.');
     }
