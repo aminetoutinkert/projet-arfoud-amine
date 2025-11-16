@@ -83,6 +83,23 @@ export const updateArticle = createAsyncThunk(
         }
     }
 );
+
+// 5. Téléverser une image
+export const uploadImage = createAsyncThunk(
+    'articles/uploadImage',
+    async (imageData, thunkAPI) => {
+        try {
+            const token = thunkAPI.getState().auth.client.token;
+            return await articleService.uploadImage(imageData, token);
+        } catch (error) {
+            const message =
+                (error.response && error.response.data && error.response.data.message) ||
+                error.message ||
+                error.toString();
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+);
 // 🚨 FIN DE LA MODIFICATION POUR UPDATE
 
 // ----------------------------------------------------------------------
@@ -173,6 +190,20 @@ export const articleSlice = createSlice({
                 }
             })
             .addCase(updateArticle.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.message = action.payload;
+            })
+            // ==================== UPLOAD IMAGE ====================
+            .addCase(uploadImage.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(uploadImage.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isSuccess = true;
+                // Note: We don't modify the state here as the image URL is handled in the form state
+            })
+            .addCase(uploadImage.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.message = action.payload;

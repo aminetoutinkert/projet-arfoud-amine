@@ -4,6 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path'); // Import path module
 const clientRoutes = require('./routes/clientRoutes');
 const articleRoutes = require('./routes/articleRoutes');
 const app = express();
@@ -29,6 +30,9 @@ app.use(express.urlencoded({ extended: false })); // <-- Ajouté si manquant pou
 // --- DÉFINITION DES ROUTES D'API ---
 app.use('/api/clients', clientRoutes);
 app.use('/api/articles', articleRoutes);
+
+// --- SERVIR LES FICHIERS STATIQUES (IMAGES) ---
+app.use('/backend/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Route de Test
 app.get('/', (req, res) => {

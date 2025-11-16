@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'; 
 import { useDispatch, useSelector } from 'react-redux';
-import { createArticle, reset } from '../features/articles/articleSlice'; // 🚨 Suppression de getArticles
+import { createArticle, reset, uploadImage } from '../features/articles/articleSlice'; // 🚨 Ajout de uploadImage
 
 function ArticleForm() {
     const dispatch = useDispatch();
@@ -16,6 +16,7 @@ function ArticleForm() {
         prix: '', 
         quantiteStock: '',
     });
+    const [image, setImage] = useState(''); // State pour l'URL de l'image
 
     const { nom, description, prix, quantiteStock } = formData;
     
@@ -39,6 +40,7 @@ function ArticleForm() {
             // Réinitialisation du formulaire UNIQUEMENT si c'est la création.
             if (message === "Article créé avec succès") {
                 setFormData({ nom: '', description: '', prix: '', quantiteStock: '' });
+                setImage(''); // Réinitialiser l'image
             }
             
             // 🚨 SUPPRESSION : Nous n'appelons plus getArticles ici.
@@ -63,6 +65,18 @@ function ArticleForm() {
         }));
     };
 
+    const onFileChange = async (e) => {
+        const imageData = new FormData();
+        imageData.append('image', e.target.files[0]);
+        
+        try {
+            const imageUrl = await dispatch(uploadImage(imageData)).unwrap();
+            setImage(imageUrl);
+        } catch (error) {
+            console.error('Failed to upload image:', error);
+        }
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
         
@@ -72,6 +86,7 @@ function ArticleForm() {
             // Conversion en nombre avant l'envoi au service Redux
             prix: parseFloat(prix || 0),
             quantiteStock: parseInt(quantiteStock || 0), 
+            image, // Ajout de l'URL de l'image
         };
         
         // Appel de l'action Redux
@@ -146,6 +161,18 @@ function ArticleForm() {
                         onChange={onChange}
                         min='0'
                         required
+                    />
+                </div>
+
+                {/* Champ Image */}
+                <div className='form-group'>
+                    <label htmlFor='image'>Image de l'article</label>
+                    <input
+                        type='file'
+                        name='image'
+                        id='image'
+                        className='form-control'
+                        onChange={onFileChange}
                     />
                 </div>
                 

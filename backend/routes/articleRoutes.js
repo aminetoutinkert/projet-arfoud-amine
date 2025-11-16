@@ -4,21 +4,45 @@ const express = require('express');
 const router = express.Router();
 const { createArticle, getArticles, getArticle, updateArticle, deleteArticle } = require('../controllers/articleController'); 
 const { protect } = require('../middleware/authMiddleware');
+const path = require('path');
+const multer = require('multer');
 
-// Route de création d'article
-// POST /api/articles
-// Elle est protégée, donc 'protect' s'exécute en premier
+// --- Configuration de Multer pour le stockage des images ---
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, 'backend/uploads/'); // Le dossier où les images seront stockées
+    },
+    filename(req, file, cb) {
+        // Crée un nom de fichier unique pour éviter les conflits
+        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+// Middleware Multer pour gérer le téléversement d'un seul fichier
+const upload = multer({ storage });
+
+// --- Définition des routes ---
+
+// Route pour gérer le téléversement d'une image
+// POST /api/articles/upload
+router.post('/upload', upload.single('image'), (req, res) => {
+    if (req.file) {
+        // Retourne le chemin de l'image téléversée
+        res.status(200).send(`/${req.file.path.replace(/\\/g, '/')}`);
+    } else {
+        res.status(400).send('Aucun fichier téléversé.');
+    }
+});
+
 // Route de base /api/articles
 router.route('/')
-    .get(protect, getArticles)    // <--- NOUVELLE ROUTE : GET pour lire la liste
-    .post(protect, createArticle);  // POST pour créer
+    .get(protect, getArticles)
+    .post(protect, createArticle);
 
 // Route pour gérer un article spécifique par ID
-// GET /api/articles/:id (Lecture)
-// PUT /api/articles/:id (Mise à jour)
 router.route('/:id')
     .get(protect, getArticle)
-    .put(protect, updateArticle) // <--- NOUVELLE ROUTE (PUT par ID)
-    .delete(protect, deleteArticle); // <--- NOUVELLE ROUTE (DELETE par ID)
+    .put(protect, updateArticle)
+    .delete(protect, deleteArticle);
 
 module.exports = router;

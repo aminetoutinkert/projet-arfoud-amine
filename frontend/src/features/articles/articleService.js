@@ -50,12 +50,27 @@ const deleteArticle = async (articleId, token) => {
     return response.data; 
 };
 
+// Fonction pour téléverser une image
+const uploadImage = async (imageData, token) => {
+    const config = {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    const response = await axios.post(`${API_URL}/upload`, imageData, config);
+
+    return response.data;
+};
+
 
 // On exporte toutes les fonctions du service
 const articleService = {
     createArticle,
     getArticles,
     deleteArticle,
+    uploadImage,
     // Les fonctions pour l'édition (update) seront ajoutées plus tard si besoin
 };
 

@@ -30,6 +30,19 @@ function ArticleItem({ article, onDelete }) {
             </div>
             
             <h2>{article.nom}</h2>
+            {article.image && (
+                <img 
+                    src={`http://localhost:5000${article.image}`} 
+                    alt={article.nom} 
+                    style={{ 
+                        width: '100%', 
+                        height: '200px', 
+                        objectFit: 'cover', 
+                        borderRadius: '5px', 
+                        marginBottom: '15px' 
+                    }} 
+                />
+            )}
             <p>{article.description}</p>
             
             {/* Affichage des détails */}
