@@ -18,10 +18,8 @@ beforeAll(async () => {
   const testDbName = 'arfoud_test'; // Nom de la base de données de test
   const uri = baseUri.substring(0, baseUri.lastIndexOf('/') + 1) + testDbName;
 
-  console.log(`Attempting to connect to MongoDB at: ${uri}`); // Log the URI
   try {
     await mongoose.connect(uri);
-    console.log('Successfully connected to MongoDB for tests.');
   } catch (error) {
     console.error('Failed to connect to MongoDB for tests:', error);
     // Optionally, re-throw the error to fail the test suite immediately
