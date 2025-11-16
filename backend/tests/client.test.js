@@ -1,5 +1,7 @@
 // Fichier: backend/tests/client.test.js
 
+require('dotenv').config(); // Charge les variables d'environnement du fichier .env
+
 const request = require('supertest');
 const app = require('../server'); // Assurez-vous que votre fichier server.js exporte l'application Express
 const mongoose = require('mongoose');
@@ -7,11 +9,25 @@ const Client = require('../models/Client'); // Importez votre modèle Client
 
 // Avant tous les tests, connectez-vous à une base de données de test
 beforeAll(async () => {
-  // Utilisez une base de données de test différente pour éviter de polluer la base de données de développement
-  // Assurez-vous que MONGODB_URI_TEST est défini dans votre .env ou un fichier de configuration de test
-  const uri = process.env.MONGODB_URI_TEST || 'mongodb://localhost:27017/arfoud_test';
-  await mongoose.connect(uri);
-});
+  // Utilisez la MONGODB_URI principale, mais avec un nom de base de données de test
+  const baseUri = process.env.MONGODB_URI;
+  if (!baseUri) {
+    throw new Error('MONGODB_URI is not defined in .env. Please provide it for tests.');
+  }
+  // Extrait le nom de la base de données de l'URI principale et ajoute '_test'
+  const testDbName = 'arfoud_test'; // Nom de la base de données de test
+  const uri = baseUri.substring(0, baseUri.lastIndexOf('/') + 1) + testDbName;
+
+  console.log(`Attempting to connect to MongoDB at: ${uri}`); // Log the URI
+  try {
+    await mongoose.connect(uri);
+    console.log('Successfully connected to MongoDB for tests.');
+  } catch (error) {
+    console.error('Failed to connect to MongoDB for tests:', error);
+    // Optionally, re-throw the error to fail the test suite immediately
+    throw error;
+  }
+}, 30000); // Augmente le timeout de beforeAll à 30 secondes
 
 // Après chaque test, nettoyez la base de données
 afterEach(async () => {
