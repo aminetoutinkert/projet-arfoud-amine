@@ -2,39 +2,45 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, reset } from '../features/auth/authSlice';
+import { FaFeatherAlt } from 'react-icons/fa'; // Import a logo icon
 
 function Navbar() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
-  // 1. Lire l'utilisateur stocké dans le localStorage
-  const client = JSON.parse(localStorage.getItem('client'));
+  // Get client state from Redux store
+  const { client } = useSelector((state) => state.auth);
 
-  // 2. Fonction de Déconnexion
+  // Dispatch logout action
   const onLogout = () => {
-    localStorage.removeItem('client'); // Supprimer le token
-    navigate('/'); // Rediriger vers la page d'accueil
-    window.location.reload(); // Recharger pour rafraîchir la Navbar immédiatement
+    dispatch(logout());
+    dispatch(reset());
+    navigate('/');
   };
 
   return (
     <header className='header'>
       <div className='logo'>
-        <Link to='/'>Gestion d'Articles</Link>
+        <Link to='/'>
+          <FaFeatherAlt style={{ marginRight: '8px' }} /> ARFOUD
+        </Link>
       </div>
       
       <ul>
-        {client ? ( // SI le client est connecté (client existe)
+        {client ? ( // If client is logged in
           <>
             <li>
               <Link to='/dashboard'>Tableau de Bord</Link>
             </li>
             <li>
-              <button className='btn' onClick={onLogout}>
+              <button className='btn btn-logout' onClick={onLogout}>
                 Se Déconnecter
               </button>
             </li>
           </>
-        ) : ( // SINON, afficher les liens d'inscription/connexion
+        ) : ( // If client is not logged in
           <>
             <li>
               <Link to='/login'>Se Connecter</Link>
